@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+
+# goosnew: query google news articles
+# AO-2020
+#
+# usage example: goosnews linux 10 nl
+
+import sys
+
+from termcolor import colored
+from googlesearch import search 
+from http import cookiejar  # Python 2: import cookielib as cookiejar
+import requests
+import urllib.request
+from bs4 import BeautifulSoup
+
+
+"""
+	edit user_agents in .local/lib/python3.7/site-packages/googlesearch
+
+	zless user_agents.txt.gz :
+	your bot 0.1
+        your bot 0.2
+"""
+
+"""
+    Search the given query string using Google.
+
+    :param str query: Query string. Must NOT be url-encoded.
+    :param str tld: Top level domain.
+    :param str lang: Language.
+    :param str tbs: Time limits (i.e "qdr:h" => last hour,
+        "qdr:d" => last 24 hours, "qdr:m" => last month).
+    :param str safe: Safe search.
+    :param int num: Number of results per page.
+    :param int start: First result to retrieve.
+    :param int stop: Last result to retrieve.
+        Use None to keep searching forever.
+    :param list domains: A list of web domains to constrain
+        the search.
+    :param float pause: Lapse to wait between HTTP requests.
+        A lapse too long will make the search slow, but a lapse too short may
+        cause Google to block your IP. Your mileage may vary!
+    :param str tpe: Search type (images, videos, news, shopping, books, apps)
+        Use the following values {videos: 'vid', images: 'isch',
+        news: 'nws', shopping: 'shop', books: 'bks', applications: 'app'}
+    :param str country: Country or region to focus the search on. Similar to
+        changing the TLD, but does not yield exactly the same results.
+        Only Google knows why...
+    :param dict extra_params: A dictionary of extra HTTP GET
+        parameters, which must be URL encoded. For example if you don't want
+        Google to filter similar results you can set the extra_params to
+        {'filter': '0'} which will append '&filter=0' to every query.
+    :param str user_agent: User agent for the HTTP requests.
+        Use None for the default.
+"""
+
+class BlockAll(cookiejar.CookiePolicy):
+    return_ok = set_ok = domain_return_ok = path_return_ok = lambda self, *args, **kwargs: False
+    netscape = True
+    rfc2965 = hide_cookie2 = False
+
+def main():
+	#s = requests.Session()
+	#s.cookies.set_policy(BlockAll())
+	#no fix yet for:
+        #urllib.error.HTTPError: HTTP Error 429: Too Many Requests  
+
+	argc = len(sys.argv)
+	query=""
+	tld="nl"
+	langs="nl"
+	tpes="nws"
+	if argc == 1:
+		print("goos \"Some Name\" <maxresults> <lang> <tld> <tpe=vid, isch, nws, shop, bks, app>")
+		return
+	else:
+		query = sys.argv[1]
+	maxresults=10
+	if argc >= 3:
+	    maxresults = int(sys.argv[2])
+	if argc >= 4:
+	    langs = sys.argv[3]
+	if argc >= 5:
+	    tld = sys.argv[4]
+	if argc >= 6:
+	    tpes = sys.argv[5]
+
+	print("searching", query) 
+	print("lang:", langs,
+	      "max:", maxresults,
+	      "tld:", tld,
+	      "tpe:", tpes, "\n")
+ 
+	try:
+		for j in search(query, tld, lang=langs, num=10,start=0,stop=maxresults, pause=2, tpe=tpes): 
+			try:		
+				fp = urllib.request.urlopen(j)
+				mybytes = fp.read()
+				rawhtml = mybytes.decode("utf8")
+				fp.close()
+				rawhtml[:60]
+				soup = BeautifulSoup(rawhtml, 'html.parser')
+				title = soup.find('title')
+				print(title.string.lstrip().rstrip()) # Prints the tag string content
+				print(colored(j, 'blue')) 
+				print('________')
+			except Exception:
+				pass
+	
+	except Exception as x:
+		print(x)
+
+if __name__ == "__main__":
+	main()
