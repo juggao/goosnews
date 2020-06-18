@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# goosnew: query google news articles
+# goosnews: query google news articles
 # AO-2020
 #
 # usage example: goosnews linux 10 nl
