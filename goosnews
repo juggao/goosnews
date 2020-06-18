@@ -72,7 +72,7 @@ def main():
 	langs="nl"
 	tpes="nws"
 	if argc == 1:
-		print("goos \"Some Name\" <maxresults> <lang> <tld> <tpe=vid, isch, nws, shop, bks, app>")
+		print("goosnews \"Some Name\" <maxresults> <lang> <tld> <tpe=vid, isch, nws, shop, bks, app>")
 		return
 	else:
 		query = sys.argv[1]
@@ -102,7 +102,7 @@ def main():
 				rawhtml[:60]
 				soup = BeautifulSoup(rawhtml, 'html.parser')
 				title = soup.find('title')
-				print(title.string.lstrip().rstrip()) # Prints the tag string content
+				print(colored(title.string.lstrip().rstrip(), 'green')) # Prints the tag string content
 				print(colored(j, 'blue')) 
 				print('________')
 			except Exception:
