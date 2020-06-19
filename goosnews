@@ -71,8 +71,9 @@ def main():
 	tld="nl"
 	langs="nl"
 	tpes="nws"
+	url=0
 	if argc == 1:
-		print("goosnews \"Some Name\" <maxresults> <lang> <tld> <tpe=vid, isch, nws, shop, bks, app>")
+		print("goosnews \"Some Name\" <maxresults> <lang> <tld> <flag=u>")
 		return
 	else:
 		query = sys.argv[1]
@@ -84,25 +85,31 @@ def main():
 	if argc >= 5:
 	    tld = sys.argv[4]
 	if argc >= 6:
-	    tpes = sys.argv[5]
+		if sys.argv[5]=="u":
+			url = 1		
 
-	print("searching", query) 
+	print("searching:", query) 
 	print("lang:", langs,
+          #"tbs: d", 
 	      "max:", maxresults,
 	      "tld:", tld,
-	      "tpe:", tpes, "\n")
+	      "tpe:", tpes, 
+		  "url only:", url, "\n")
  
 	try:
-		for j in search(query, tld, lang=langs, num=10,start=0,stop=maxresults, pause=2, tpe=tpes): 
+		for j in search(query, tld, lang=langs,num=10,start=0,stop=maxresults, pause=2, tpe=tpes): 
 			try:		
-				fp = urllib.request.urlopen(j)
-				mybytes = fp.read()
-				rawhtml = mybytes.decode("utf8")
-				fp.close()
-				rawhtml[:60]
-				soup = BeautifulSoup(rawhtml, 'html.parser')
-				title = soup.find('title')
-				print(colored(title.string.lstrip().rstrip(), 'green')) # Prints the tag string content
+				if url==0:				
+					fp = urllib.request.urlopen(j)
+					mybytes = fp.read()
+					rawhtml = mybytes.decode("utf8")
+					fp.close()
+					rawhtml[:60]
+					soup = BeautifulSoup(rawhtml, 'html.parser')
+					title = soup.find('title')
+					print(colored(title.string.lstrip().rstrip(), 'cyan', attrs=['bold'])) # Prints the tag string content
+					#print(title.string.lstrip().rstrip()) # Prints the tag string content
+
 				print(colored(j, 'blue')) 
 				print('________')
 			except Exception:
