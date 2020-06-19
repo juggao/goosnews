@@ -80,7 +80,9 @@ def main():
 		query = sys.argv[1]
 	maxresults=10
 	if argc >= 3:
-	    maxresults = int(sys.argv[2])
+		maxresults = int(sys.argv[2])
+		if maxresults==0:
+			maxresults=None
 	if argc >= 4:
 	    langs = sys.argv[3]
 	if argc >= 5:
