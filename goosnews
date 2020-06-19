@@ -72,8 +72,9 @@ def main():
 	langs="nl"
 	tpes="nws"
 	url=0
+	dlimit=""
 	if argc == 1:
-		print("goosnews \"Some Name\" <maxresults> <lang> <tld> <flag=u>")
+		print("goosnews \"Some Name\" <maxresults> <lang> <tld> <flag=udmh>")
 		return
 	else:
 		query = sys.argv[1]
@@ -85,19 +86,25 @@ def main():
 	if argc >= 5:
 	    tld = sys.argv[4]
 	if argc >= 6:
-		if sys.argv[5]=="u":
+		if 'u' in sys.argv[5]:
 			url = 1		
+		if 'd' in sys.argv[5]:
+			dlimit='qdr:d'
+		if 'm' in sys.argv[5]:
+			dlimit='qdr:m'
+		if 'h' in sys.argv[5]:
+			dlimit='qdr:h'
 
 	print("searching:", query) 
 	print("lang:", langs,
-          #"tbs: d", 
+          "tbs: ", dlimit, 
 	      "max:", maxresults,
 	      "tld:", tld,
 	      "tpe:", tpes, 
 		  "url only:", url, "\n")
  
 	try:
-		for j in search(query, tld, lang=langs,num=10,start=0,stop=maxresults, pause=2, tpe=tpes): 
+		for j in search(query, tld, lang=langs,tbs=dlimit, num=10,start=0,stop=maxresults, pause=2, tpe=tpes): 
 			try:		
 				if url==0:				
 					fp = urllib.request.urlopen(j)
