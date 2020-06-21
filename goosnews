@@ -113,7 +113,7 @@ def main():
 					mybytes = fp.read()
 					rawhtml = mybytes.decode("utf8")
 					fp.close()
-					rawhtml[:60]
+					rawhtml=rawhtml[:8192]
 					soup = BeautifulSoup(rawhtml, 'html.parser')
 					title = soup.find('title')
 					print(colored(title.string.lstrip().rstrip(), 'cyan', attrs=['bold'])) # Prints the tag string content
